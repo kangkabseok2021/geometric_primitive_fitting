@@ -1,5 +1,4 @@
 """Cross-validate C++ LM sphere fitter against SciPy least_squares."""
-import sys
 import time
 import importlib.util
 from pathlib import Path
