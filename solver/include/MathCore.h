@@ -16,9 +16,9 @@ consteval int factorial(int n) {
     return n == 0 ? 1 : n * factorial(n - 1);
 }
 
-// N-term Taylor exp: Σₖ₌₀ᴺ xᵏ/k!  — fully evaluated at compile time.
+// N-term Taylor exp: Σₖ₌₀ᴺ xᵏ/k!
 template<int N, FloatingPoint T>
-consteval T taylor_exp(T x) {
+constexpr T taylor_exp(T x) {
     T sum = T{1}, term = T{1};
     for (int k = 1; k <= N; ++k) {
         term = term * (x / T(k));
@@ -29,7 +29,7 @@ consteval T taylor_exp(T x) {
 
 // N-term Taylor sin: Σₖ₌₀ᴺ (-1)ᵏ x^(2k+1)/(2k+1)!
 template<int N, FloatingPoint T>
-consteval T taylor_sin(T x) {
+constexpr T taylor_sin(T x) {
     T sum = x, term = x;
     for (int k = 1; k <= N; ++k) {
         term = -term * (x * x) / T((2*k) * (2*k + 1));
@@ -40,7 +40,7 @@ consteval T taylor_sin(T x) {
 
 // N-term Taylor cos: Σₖ₌₀ᴺ (-1)ᵏ x^(2k)/(2k)!
 template<int N, FloatingPoint T>
-consteval T taylor_cos(T x) {
+constexpr T taylor_cos(T x) {
     T sum = T{1}, term = T{1};
     for (int k = 1; k <= N; ++k) {
         term = -term * (x * x) / T((2*k - 1) * (2*k));

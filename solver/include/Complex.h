@@ -24,7 +24,7 @@ struct Complex {
 
 // Compile-time complex exponential: e^z = e^(re) · (cos(im) + i·sin(im))
 template<FloatingPoint T>
-consteval Complex<T> exp_complex(Complex<T> z) {
+constexpr Complex<T> exp_complex(Complex<T> z) {
     T mag  = taylor_exp<20>(z.re);
     T cosv = taylor_cos<15>(z.im);
     T sinv = taylor_sin<15>(z.im);
