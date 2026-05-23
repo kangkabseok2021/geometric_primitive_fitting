@@ -8,7 +8,7 @@ on:
 
 jobs:
   build-and-test:
-    name: C++ build + 10 GoogleTests
+    name: C++ build + GoogleTests (sphere + solver)
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
@@ -16,7 +16,7 @@ jobs:
       - name: Install dependencies
         run: |
           sudo apt-get update -qq
-          sudo apt-get install -y cmake ninja-build
+          sudo apt-get install -y cmake ninja-build python3-dev
 
       - name: Configure
         run: cmake -S . -B build -DCMAKE_BUILD_TYPE=Release -GNinja -DBUILD_TESTING=ON
@@ -24,11 +24,11 @@ jobs:
       - name: Build
         run: cmake --build build --parallel
 
-      - name: Run tests
-        run: ctest --test-dir build --output-on-failure
+      - name: Run sphere + solver tests
+        run: ctest --test-dir build --output-on-failure -R "sphere_tests|solver_tests"
 
   python-validate:
-    name: pybind11 build + ruff + SciPy cross-validation
+    name: nanobind modules + ruff + cross-validation
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
@@ -39,16 +39,42 @@ jobs:
           sudo apt-get install -y cmake ninja-build python3-dev python3-pip
 
       - name: Install Python dependencies
-        run: pip3 install numpy scipy ruff --break-system-packages
+        run: pip3 install nanobind numpy scipy ruff --break-system-packages
 
       - name: Configure (with Python)
         run: cmake -S . -B build -DCMAKE_BUILD_TYPE=Release -GNinja
 
-      - name: Build pybind11 module
-        run: cmake --build build --parallel --target sphere_fitter_py
+      - name: Build nanobind modules
+        run: cmake --build build --parallel --target sphere_fitter_py solver_py
 
       - name: ruff lint
-        run: ruff check python/
+        run: ruff check python/ solver/python/ solver/scripts/
 
-      - name: SciPy cross-validation
+      - name: Sphere fitter cross-validation
         run: python3 python/validate.py
+
+      - name: Solver RK4 cross-validation
+        run: python3 solver/python/solver_validate.py
+
+  python-engine-test:
+    name: PythonEngine (embedded CPython) — 8 GoogleTests
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install system dependencies
+        run: |
+          sudo apt-get update -qq
+          sudo apt-get install -y cmake ninja-build python3-dev python3-pip
+
+      - name: Install Python dependencies
+        run: pip3 install nanobind numpy --break-system-packages
+
+      - name: Configure
+        run: cmake -S . -B build -DCMAKE_BUILD_TYPE=Release -GNinja
+
+      - name: Build python_engine_tests
+        run: cmake --build build --parallel --target python_engine_tests
+
+      - name: Run PythonEngine tests
+        run: ctest --test-dir build --output-on-failure -R "python_engine_tests"

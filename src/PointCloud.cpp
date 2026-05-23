@@ -3,6 +3,7 @@
 #include <sstream>
 #include <random>
 #include <cmath>
+#include <numbers>
 
 PointCloud load_csv(const std::string& path) {
     PointCloud pts;
@@ -25,7 +26,7 @@ PointCloud generate_noisy_sphere(const Vec3& center, double radius,
     PointCloud pts;
     pts.reserve(static_cast<size_t>(n_points));
     std::mt19937                     rng(seed);
-    std::uniform_real_distribution<> azimuth(0.0, 2.0 * M_PI);
+    std::uniform_real_distribution<> azimuth(0.0, 2.0 * std::numbers::pi);
     std::uniform_real_distribution<> costheta(-1.0, 1.0);
     std::normal_distribution<>       noise(0.0, sigma);
 
