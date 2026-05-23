@@ -7,15 +7,20 @@ set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 
 include(FetchContent)
 
-# Eigen
+# Eigen — header-only: populate without running its CMakeLists.txt
+# (avoids registering Eigen's 900+ internal tests in ctest)
 FetchContent_Declare(eigen
   GIT_REPOSITORY https://gitlab.com/libeigen/eigen.git
   GIT_TAG        3.4.0
   GIT_SHALLOW    TRUE
 )
-set(EIGEN_BUILD_TESTING OFF CACHE BOOL "" FORCE)
-set(EIGEN_BUILD_DOC     OFF CACHE BOOL "" FORCE)
-FetchContent_MakeAvailable(eigen)
+FetchContent_GetProperties(eigen)
+if(NOT eigen_POPULATED)
+  FetchContent_Populate(eigen)
+endif()
+add_library(Eigen3 INTERFACE)
+add_library(Eigen3::Eigen ALIAS Eigen3)
+target_include_directories(Eigen3 INTERFACE ${eigen_SOURCE_DIR})
 
 # GoogleTest
 FetchContent_Declare(googletest
