@@ -1,0 +1,12 @@
+.cache/
+build/
+build_profile/
+*.o
+*.a
+*.so
+*.dylib
+callgrind.out*
+points_*.csv
+__pycache__/
+*.pyc
+.DS_Store
