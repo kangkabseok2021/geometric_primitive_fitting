@@ -57,7 +57,7 @@ jobs:
         run: python3 solver/python/solver_validate.py
 
   python-engine-test:
-    name: PythonEngine (embedded CPython) — 8 GoogleTests
+    name: PythonEngine (embedded CPython) — 9 GoogleTests
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
