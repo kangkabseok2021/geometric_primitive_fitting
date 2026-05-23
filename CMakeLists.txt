@@ -41,6 +41,7 @@ add_library(sphere_fitter_lib
 )
 target_include_directories(sphere_fitter_lib PUBLIC include)
 target_link_libraries(sphere_fitter_lib PUBLIC Eigen3::Eigen)
+set_target_properties(sphere_fitter_lib PROPERTIES POSITION_INDEPENDENT_CODE ON)
 target_compile_options(sphere_fitter_lib PRIVATE -Wall -Wextra -O2)
 
 # pybind11 module
