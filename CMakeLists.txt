@@ -81,6 +81,13 @@ if(Python3_FOUND)
     PUBLIC  solver_core
     PRIVATE nanobind-static Python3::Python)
   set_target_properties(python_engine_lib PROPERTIES POSITION_INDEPENDENT_CODE ON)
+  
+  # Skeleton kinematics optimizer C++ acceleration
+  nanobind_add_module(skeleton_cpp skeleton_cpp/bindings.cpp skeleton_cpp/lm_solver.cpp)
+  target_include_directories(skeleton_cpp PRIVATE skeleton_cpp)
+  target_link_libraries(skeleton_cpp PRIVATE Eigen3::Eigen)
+  target_compile_options(skeleton_cpp PRIVATE -O3 -march=native -ffast-math)
+  set_target_properties(skeleton_cpp PROPERTIES LIBRARY_OUTPUT_DIRECTORY ${CMAKE_SOURCE_DIR}/skeleton_optimizer)
 endif()
 
 enable_testing()

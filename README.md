@@ -1,17 +1,21 @@
-# Geometric Primitive Fitting via Non-Linear Optimization
+# Numerical Optimization & Geometric Modeling Monorepo
 
-C++17 tool that fits a sphere to noisy 3D point clouds (simulating coordinate measuring machine data) using a **custom Levenberg-Marquardt solver** with an **analytic Jacobian**, **RANSAC outlier rejection**, and a **pybind11 Python bridge** cross-validated against SciPy.
+This repository contains multiple advanced computational pipelines built around **C++**, **Eigen**, **nanobind**, and non-linear optimization techniques (like Levenberg-Marquardt), heavily integrated with **Python** for visualization and rapid prototyping.
 
-## Key Technical Highlights
+## Projects in this Repository
 
-| What | How |
-|------|-----|
-| LM solver | Marquardt damping `λ·diag(JᵀJ)` — scale-invariant, no external solver |
-| Analytic Jacobian | `Jᵢ = [−(pᵢ−c)/‖pᵢ−c‖, −1]` — verified by finite-difference test |
-| Normal equations | Eigen `LDLT` on 4×4 system — numerically stable for PSD matrices |
-| RANSAC | 4-point analytical fit via `Eigen::FullPivLU`, LM refit on consensus set |
-| Python bridge | pybind11 — zero-copy NumPy↔Eigen, `scipy.optimize.least_squares` cross-validation |
-| Profiling | Valgrind Callgrind on 1M points (`scripts/profile.sh`) |
+### 1. Constrained Skeletal Kinematics Optimizer
+A hybrid Python/C++ pipeline that ingests simulated noisy 3D keypoints and mathematically forces them into a biomechanically valid rigid-body skeleton using constrained optimization and DSP techniques.
+- **Signal Processing**: 7-sigma-point Unscented Kalman Filter (`filterpy`) + Mahalanobis gating.
+- **Optimization**: Levenberg-Marquardt solver (SciPy vs custom C++/Eigen `LDLT`).
+- **Acceleration**: C++ implementation achieves >250x speedup over SciPy. Python bindings via `nanobind`.
+- **Visualization**: Plotly and Matplotlib 3D overlays.
+
+### 2. Geometric Primitive Fitting via Non-Linear Optimization
+A C++17 tool that fits a sphere to noisy 3D point clouds using a custom Levenberg-Marquardt solver with an analytic Jacobian, RANSAC outlier rejection, and a nanobind Python bridge.
+
+### 3. C++23 Compile-Time Numerical Solver
+A C++23 numerical solver utilizing `constexpr` for compile-time ODE resolution.
 
 ## Build
 
@@ -20,55 +24,36 @@ cmake -S . -B build -DCMAKE_BUILD_TYPE=Release
 cmake --build build --parallel
 ```
 
-Requires: CMake ≥ 3.20, C++17 compiler. Eigen, GoogleTest, pybind11 are fetched automatically.
+Requires: CMake ≥ 3.20, C++17/23 compiler. Eigen, GoogleTest, and nanobind are fetched automatically.
 
-## Run Tests (10 GoogleTests)
+## Virtual Environment (via `uv`)
+To run Python tests, validations, and benchmarks:
+```bash
+uv venv
+source .venv/bin/activate
+uv pip install scipy plotly filterpy pytest numpy matplotlib
+```
 
+## Running Tests
+
+### C++ Tests (GoogleTest)
 ```bash
 ctest --test-dir build --output-on-failure
 ```
 
-Tests cover: exact fit, noisy convergence, Jacobian finite-difference check, RANSAC outlier rejection, reproducibility, ground-truth recovery.
-
-## Python Cross-Validation
-
+### Python Tests (PyTest)
 ```bash
-# Build the Python module first
-cmake --build build --target sphere_fitter_py
-
-# Run validation (requires numpy, scipy)
-pip install numpy scipy
-python3 python/validate.py
+pytest tests/test_signal.py tests/test_pipeline.py
 ```
 
-Expected output: `‖c_cpp − c_scipy‖ < 1e-3`, speedup reported.
+## Running Benchmarks (Skeletal Kinematics)
+```bash
+# Requires the build step to have compiled `skeleton_cpp`
+python benchmarks/bench_lm.py
+```
 
 ## Profiling (Valgrind)
-
 ```bash
-# Requires: valgrind, g++
 ./scripts/profile.sh
 ```
-
 Generates `scripts/callgrind.out`. View with `kcachegrind`.
-
-## Project Structure
-
-```
-include/
-  PointCloud.h        — Vec3, PointCloud typedef, generators
-  SphereFitter.h      — LM fitter interface + SphereFitterOptions
-  RansacFilter.h      — RANSAC interface + RansacResult
-src/
-  PointCloud.cpp      — CSV loader + noisy sphere generator
-  SphereFitter.cpp    — LM solver, analytic Jacobian, LDLT
-  RansacFilter.cpp    — 4-point analytical fit, RANSAC loop
-python/
-  bindings.cpp        — pybind11 module
-  validate.py         — SciPy cross-validation
-tests/
-  test_sphere_fitter.cpp  — 6 LM solver tests
-  test_ransac.cpp         — 4 RANSAC tests
-scripts/
-  profile.sh          — Valgrind Callgrind profiling on 1M points
-```
