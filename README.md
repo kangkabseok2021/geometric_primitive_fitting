@@ -7,7 +7,7 @@ This repository contains multiple advanced computational pipelines built around 
 | Project | Description | Docs |
 |---|---|---|
 | **Constrained Skeletal Kinematics Optimizer** | Hybrid Python/C++ pipeline combining a 7-sigma-point Unscented Kalman Filter and a custom C++/Eigen Levenberg-Marquardt solver to fit simulated 3D keypoints to a rigid articulated skeleton. | [docs/MATH.md](docs/MATH.md)<br>[docs/BENCHMARK.md](docs/BENCHMARK.md) |
-| **Geometric Primitive Fitting** | C++17 tool fitting a sphere to noisy 3D point clouds using a custom Levenberg-Marquardt solver, analytic Jacobian, and RANSAC outlier rejection. | N/A |
+| **Geometric Primitive Fitting** | C++23 tool fitting a sphere to noisy 3D point clouds using a custom Levenberg-Marquardt solver, analytic Jacobian, and RANSAC outlier rejection. | N/A |
 | **C++23 Numerical Solver** | C++23 compile-time numerical ODE solver utilizing `constexpr`. | N/A |
 
 ## Build
@@ -17,7 +17,7 @@ cmake -S . -B build -DCMAKE_BUILD_TYPE=Release
 cmake --build build --parallel
 ```
 
-Requires: CMake ≥ 3.20, C++17/23 compiler. Eigen, GoogleTest, and nanobind are fetched automatically.
+Requires: CMake ≥ 3.20, C++23 compiler. Eigen, GoogleTest, and nanobind are fetched automatically.
 
 ## Virtual Environment (via `uv`)
 To run Python tests, validations, and benchmarks:
