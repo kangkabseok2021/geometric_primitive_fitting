@@ -4,18 +4,11 @@ This repository contains multiple advanced computational pipelines built around 
 
 ## Projects in this Repository
 
-### 1. Constrained Skeletal Kinematics Optimizer
-A hybrid Python/C++ pipeline that ingests simulated noisy 3D keypoints and mathematically forces them into a biomechanically valid rigid-body skeleton using constrained optimization and DSP techniques.
-- **Signal Processing**: 7-sigma-point Unscented Kalman Filter (`filterpy`) + Mahalanobis gating.
-- **Optimization**: Levenberg-Marquardt solver (SciPy vs custom C++/Eigen `LDLT`).
-- **Acceleration**: C++ implementation achieves >250x speedup over SciPy. Python bindings via `nanobind`.
-- **Visualization**: Plotly and Matplotlib 3D overlays.
-
-### 2. Geometric Primitive Fitting via Non-Linear Optimization
-A C++17 tool that fits a sphere to noisy 3D point clouds using a custom Levenberg-Marquardt solver with an analytic Jacobian, RANSAC outlier rejection, and a nanobind Python bridge.
-
-### 3. C++23 Compile-Time Numerical Solver
-A C++23 numerical solver utilizing `constexpr` for compile-time ODE resolution.
+| Project | Description | Docs |
+|---|---|---|
+| **Constrained Skeletal Kinematics Optimizer** | Hybrid Python/C++ pipeline combining a 7-sigma-point Unscented Kalman Filter and a custom C++/Eigen Levenberg-Marquardt solver to fit simulated 3D keypoints to a rigid articulated skeleton. | [docs/MATH.md](docs/MATH.md)<br>[docs/BENCHMARK.md](docs/BENCHMARK.md) |
+| **Geometric Primitive Fitting** | C++17 tool fitting a sphere to noisy 3D point clouds using a custom Levenberg-Marquardt solver, analytic Jacobian, and RANSAC outlier rejection. | N/A |
+| **C++23 Numerical Solver** | C++23 compile-time numerical ODE solver utilizing `constexpr`. | N/A |
 
 ## Build
 
