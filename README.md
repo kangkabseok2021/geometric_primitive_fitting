@@ -1,48 +1,43 @@
 # Numerical Optimization & Geometric Modeling Monorepo
 
-This repository contains multiple advanced computational pipelines built around **C++**, **Eigen**, **nanobind**, and non-linear optimization techniques (like Levenberg-Marquardt), heavily integrated with **Python** for visualization and rapid prototyping.
+This repository contains multiple C++ and Python pipelines built around **Eigen**, numerical optimization, Kalman filtering, and signal processing — with Python used for validation and visualization.
 
-## Projects in this Repository
+## Projects
 
-| Project | Description | Docs |
+| Project | Language | Description |
 |---|---|---|
-| **Constrained Skeletal Kinematics Optimizer** | Hybrid Python/C++ pipeline combining a 7-sigma-point Unscented Kalman Filter and a custom C++/Eigen Levenberg-Marquardt solver to fit simulated 3D keypoints to a rigid articulated skeleton. | [docs/MATH.md](docs/MATH.md)<br>[docs/BENCHMARK.md](docs/BENCHMARK.md) |
-| **Geometric Primitive Fitting** | C++23 tool fitting a sphere to noisy 3D point clouds using a custom Levenberg-Marquardt solver, analytic Jacobian, and RANSAC outlier rejection. | N/A |
-| **C++23 Numerical Solver** | C++23 compile-time numerical ODE solver utilizing `constexpr`. | N/A |
+| **Automotive Radar Perception Pipeline** | C++20 + Python | CA-CFAR detector, DBSCAN clustering, EKF multi-target tracker with analytical Jacobian, Doppler classifier, nlohmann/json object list. 15 GoogleTests + 5 pytest RMSE scenarios. |
+| **Constrained Skeletal Kinematics Optimizer** | C++/Python | 7-sigma-point UKF + Levenberg-Marquardt solver fitting 3D keypoints to a rigid articulated skeleton. |
+| **Geometric Primitive Fitting** | C++23 | Sphere fitting on noisy 3D point clouds — custom LM solver, analytic Jacobian, RANSAC outlier rejection. |
+| **C++23 Numerical Solver** | C++23 | Compile-time ODE solver (Euler + RK4) via `constexpr`, nanobind Python bindings. |
 
 ## Build
 
+### Full monorepo
 ```bash
 cmake -S . -B build -DCMAKE_BUILD_TYPE=Release
 cmake --build build --parallel
-```
-
-Requires: CMake ≥ 3.20, C++23 compiler. Eigen, GoogleTest, and nanobind are fetched automatically.
-
-## Virtual Environment (via `uv`)
-To run Python tests, validations, and benchmarks:
-```bash
-uv venv
-source .venv/bin/activate
-uv pip install scipy plotly filterpy pytest numpy matplotlib
-```
-
-## Running Tests
-
-### C++ Tests (GoogleTest)
-```bash
 ctest --test-dir build --output-on-failure
 ```
 
-### Python Tests (PyTest)
+Requires: CMake ≥ 3.20, C++20 compiler. Eigen 3.4, GoogleTest 1.14, nlohmann/json 3.11.3, and nanobind are fetched automatically via FetchContent.
+
+### Radar perception pipeline (standalone)
 ```bash
-pytest tests/test_signal.py tests/test_pipeline.py
+cmake -S radar_perception_pipeline -B build-radar -DCMAKE_BUILD_TYPE=Release
+cmake --build build-radar --parallel
+ctest --test-dir build-radar --output-on-failure -V
 ```
 
-## Running Benchmarks (Skeletal Kinematics)
+Run the Python scenario harness (requires the binary to be built first):
 ```bash
-# Requires the build step to have compiled `skeleton_cpp`
-python benchmarks/bench_lm.py
+RADAR_PIPELINE_BIN=build-radar/radar_pipeline pytest radar_perception_pipeline/simulation/ -v
+```
+
+## Python environment (via `uv`)
+```bash
+uv venv && source .venv/bin/activate
+uv pip install scipy plotly filterpy pytest numpy matplotlib
 ```
 
 ## Profiling (Valgrind)
