@@ -92,3 +92,4 @@ endif()
 
 enable_testing()
 add_subdirectory(tests)
+add_subdirectory(radar_perception_pipeline)

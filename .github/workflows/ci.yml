@@ -56,6 +56,24 @@ jobs:
       - name: Solver RK4 cross-validation
         run: python3 solver/python/solver_validate.py
 
+  radar-perception-test:
+    name: Radar pipeline — 15 GoogleTests
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install dependencies
+        run: sudo apt-get update -qq && sudo apt-get install -y cmake ninja-build
+
+      - name: Configure
+        run: cmake -S radar_perception_pipeline -B build-radar -DCMAKE_BUILD_TYPE=Release -GNinja
+
+      - name: Build
+        run: cmake --build build-radar --parallel
+
+      - name: Run 15 GoogleTests
+        run: ctest --test-dir build-radar --output-on-failure -V
+
   python-engine-test:
     name: PythonEngine (embedded CPython) — 9 GoogleTests
     runs-on: ubuntu-latest
