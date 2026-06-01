@@ -159,9 +159,10 @@ TEST(EKF, JacobianMatchesNumerical) {
         };
         H_num.col(j) = (h(xp) - h(xm)) / (2.f * eps);
     }
+    // float32 central-difference with eps=1e-3 gives ~1e-3 round-off on azimuth row
     for (int i = 0; i < 3; ++i)
         for (int j = 0; j < 4; ++j)
-            EXPECT_NEAR(H_analytical(i,j), H_num(i,j), 1e-3f)
+            EXPECT_NEAR(H_analytical(i,j), H_num(i,j), 2e-3f)
                 << "at (" << i << "," << j << ")";
 }
 
